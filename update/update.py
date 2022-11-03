@@ -49,8 +49,8 @@ def prepare_state(dfi):
     Select columns, collapse update times to a single value for better file compression
     """
     
-    state = dfi[['id', 'users', 'statuses']]
-    state.insert(0, 'update_at', median_time.replace(second=0, microsecond=0))
+    state = dfi[['name', 'users', 'statuses']]
+    state.insert(1, 'update_at', median_time.replace(second=0, microsecond=0))
     return state
 
 def save_timeline(state):
@@ -62,16 +62,6 @@ def save_timeline(state):
     timeline = pd.concat([old, state])
     pq.write_table(pa.Table.from_pandas(timeline), STATE_FILENAME, use_deprecated_int96_timestamps=True)
 
-def save_directory(instances):
-    """
-    Save a simple directory table of instance id-name pairs
-    """
-    
-    directory = instances[['id', 'name']]
-    old = pq.read_table(DIRECTORY_FILENAME).to_pandas()
-    directory = pd.concat([old, directory]).drop_duplicates(subset=['id'], keep='last')
-    pq.write_table(pa.Table.from_pandas(directory), DIRECTORY_FILENAME)
-
 
 instances = get_instances()
 instances = type_instances(instances)
@@ -79,4 +69,3 @@ median_time = instances.updated_at.median()
 instances = filter_instances(instances)
 state = prepare_state(instances)
 save_timeline(state)
-save_directory(instances)
