@@ -1,0 +1,33 @@
+name: Update
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+jobs:
+  update:
+    name: update
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: main
+      - name: python setup
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: python install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r update/requirements.txt
+      - name: update data
+        run: |
+          python update/update.py
+        env:
+          INSTANCES_SOCIAL_TOKEN: ${{ secrets.INSTANCES_SOCIAL_TOKEN }}
+      - name: commit
+        run: |
+          git config --global user.email "mastodon_timeline@example.com"
+          git config --global user.name "mastodon_timeline_bot"
+          git add -A
+          git diff --quiet && git diff --staged --quiet || (git commit -m "[ci] update"; git push -q "https://$GH_TOKEN@github.com/mauforonda/mastodon_timeline.git" main)
