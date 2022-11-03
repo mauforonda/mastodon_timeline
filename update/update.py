@@ -50,7 +50,7 @@ def prepare_state(dfi):
     """
     
     state = dfi[['name', 'users', 'statuses']]
-    state.insert(1, 'update_at', median_time.replace(second=0, microsecond=0))
+    state.insert(1, 'updated_at', median_time.replace(second=0, microsecond=0))
     return state
 
 def save_timeline(state):
@@ -60,6 +60,7 @@ def save_timeline(state):
     
     old = pq.read_table(STATE_FILENAME).to_pandas()
     timeline = pd.concat([old, state])
+    timeline = type_instances(timeline)
     pq.write_table(pa.Table.from_pandas(timeline), STATE_FILENAME, use_deprecated_int96_timestamps=True)
 
 
