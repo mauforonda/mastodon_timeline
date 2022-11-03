@@ -38,7 +38,7 @@ def get_instances():
     Download instance data from instances.social
     """
     
-    url = 'https://instances.social/api/1.0/instances/list?count=5&include_down=false'
+    url = 'https://instances.social/api/1.0/instances/list?count=0&include_down=false'
     headers = {"Authorization": f'Bearer {TOKEN}'}
     response = requests.get(url, headers=headers, timeout=20)
     response = response.json()
@@ -68,6 +68,8 @@ def save_directory(instances):
     """
     
     directory = instances[['id', 'name']]
+    old = pq.read_table(DIRECTORY_FILENAME).to_pandas()
+    directory = pd.concat([old, directory]).drop_duplicates(subset=['id'], keep='last')
     pq.write_table(pa.Table.from_pandas(directory), DIRECTORY_FILENAME)
 
 
