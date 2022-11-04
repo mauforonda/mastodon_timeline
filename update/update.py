@@ -29,6 +29,7 @@ def filter_instances(dfi):
     """
     
     dfi = dfi[(dfi.users >= 0) & (dfi.statuses >= 0) & (dfi.updated_at.notna())]
+    dfi = dfi[(dfi.updated_at > (now - dt.timedelta(hours=3))) & (dfi.updated_at < (now + dt.timedelta(hours=3)))]
     # dfi = dfi[(dfi.updated_at > (median_time - dt.timedelta(hours=1))) | (dfi.updated_at < (median_time + dt.timedelta(hours=1)))]
     return dfi
 
@@ -65,6 +66,7 @@ def save_timeline(state):
 
 instances = get_instances()
 instances = type_instances(instances)
+now = dt.datetime.now(dt.timezone.utc)
 median_time = instances.updated_at.median()
 instances = filter_instances(instances)
 state = prepare_state(instances)
