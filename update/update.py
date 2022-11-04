@@ -26,11 +26,10 @@ def filter_instances(dfi):
     Filter out instances that
     - return negative `users` or `statuses`
     - return NaN update times
-    - update times an hour before or after the median update time
     """
     
     dfi = dfi[(dfi.users >= 0) & (dfi.statuses >= 0) & (dfi.updated_at.notna())]
-    dfi = dfi[(dfi.updated_at > (median_time - dt.timedelta(hours=1))) | (dfi.updated_at < (median_time + dt.timedelta(hours=1)))]
+    # dfi = dfi[(dfi.updated_at > (median_time - dt.timedelta(hours=1))) | (dfi.updated_at < (median_time + dt.timedelta(hours=1)))]
     return dfi
 
 def get_instances():
@@ -38,7 +37,7 @@ def get_instances():
     Download instance data from instances.social
     """
     
-    url = 'https://instances.social/api/1.0/instances/list?count=0&include_down=false'
+    url = 'https://instances.social/api/1.0/instances/list?count=0'
     headers = {"Authorization": f'Bearer {TOKEN}'}
     response = requests.get(url, headers=headers, timeout=20)
     response = response.json()
