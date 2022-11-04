@@ -50,7 +50,7 @@ def prepare_state(dfi):
     """
     
     state = dfi[['name', 'users', 'statuses']]
-    state.insert(1, 'updated_at', median_time.replace(second=0, microsecond=0))
+    state.insert(1, 'updated_at', now.replace(second=0, microsecond=0))
     return state
 
 def save_timeline(state):
@@ -67,7 +67,6 @@ def save_timeline(state):
 instances = get_instances()
 instances = type_instances(instances)
 now = dt.datetime.now(dt.timezone.utc)
-median_time = instances.updated_at.median()
 instances = filter_instances(instances)
 state = prepare_state(instances)
 save_timeline(state)
