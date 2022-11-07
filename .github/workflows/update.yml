@@ -23,6 +23,7 @@ jobs:
       - name: update data
         run: |
           python update/update.py
+          python update/describe.py
         env:
           INSTANCES_SOCIAL_TOKEN: ${{ secrets.INSTANCES_SOCIAL_TOKEN }}
       - name: commit
