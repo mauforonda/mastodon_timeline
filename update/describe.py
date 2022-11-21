@@ -6,7 +6,7 @@ import pyarrow.parquet as pq
 import pyarrow as pa
 
 TIMELINE = 'data/timeline.parquet'
-hours_ago = [6, 12, 24, 72]
+hours_ago = [6, 12, 24, 72, 168]
 date_format = '%Y-%m-%d %H:%M'
 
 df = pq.read_table(TIMELINE).to_pandas()
@@ -26,7 +26,7 @@ def describe_instances(df):
             timedata[h] = times[abs(times[f'ago_{h}']) == abs(times[f'ago_{h}']).min()].time.tolist()[0]
         return timedata
     
-    times = get_times(df)  
+    times = get_times(df)
     instances = [df[df.updated_at == df.updated_at.max()][['name', 'users', 'statuses']].set_index('name')]
     dfi = df.pivot_table(index='name', columns='updated_at', values='users')
 

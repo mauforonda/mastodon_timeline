@@ -10,6 +10,9 @@ import os
 STATE_FILENAME = 'data/timeline.parquet'
 DIRECTORY_FILENAME = 'data/directory.parquet'
 TOKEN = os.environ['INSTANCES_SOCIAL_TOKEN'].strip()
+NONSENSE_INSTANCES = [
+    'you-think-your-fake-numbers-are-impressive.well-this-instance-contains-all-living-humans.lubar.me'
+]
 
 def type_instances(dfi):
     """
@@ -24,13 +27,22 @@ def type_instances(dfi):
 def filter_instances(dfi):
     """
     Filter out instances that
+    - are manually flagged as returning meaningless numbers, I'm looking at you `you-think-your-fake-numbers-are-impressive.well-this-instance-contains-all-living-humans.lubar.me`
     - return negative `users` or `statuses`
     - return NaN update times
+    - are duplicated after normalizing names, selecting the one with more users
     """
     
-    dfi = dfi[(dfi.users >= 0) & (dfi.statuses >= 0) & (dfi.updated_at.notna())]
+    dfi = dfi[~dfi.name.isin(NONSENSE_INSTANCES)]
+    dfi = dfi[(dfi.users > 0) & (dfi.statuses > 0) & (dfi.updated_at.notna())]
     dfi = dfi[(dfi.updated_at > (now - dt.timedelta(hours=3))) & (dfi.updated_at < (now + dt.timedelta(hours=3)))]
-    # dfi = dfi[(dfi.updated_at > (median_time - dt.timedelta(hours=1))) | (dfi.updated_at < (median_time + dt.timedelta(hours=1)))]
+
+    dfi.name = dfi.name.apply(lambda n: n.replace('/', '').strip())
+    dfi.name = dfi.name.str.replace('^.+\@', '', regex=True)
+    dfi.name = dfi.name.str.replace('\@', '', regex=True)
+    dfi.name = dfi.name.str.lower()
+    dfi = dfi.sort_values(['name', 'users']).drop_duplicates(subset=['name'], keep='last')
+
     return dfi
 
 def get_instances():
@@ -55,12 +67,13 @@ def prepare_state(dfi):
 
 def save_timeline(state):
     """
-    Join the current with all previous states and save as a parquet
+    Join the current with all previous states, remove duplicate entries and save as a parquet
     """
     
     old = pq.read_table(STATE_FILENAME).to_pandas()
     timeline = pd.concat([old, state])
     timeline = type_instances(timeline)
+    timeline = timeline.sort_values(['name', 'updated_at', 'users']).drop_duplicates(subset=['name', 'updated_at'], keep='last')
     pq.write_table(pa.Table.from_pandas(timeline), STATE_FILENAME, use_deprecated_int96_timestamps=True)
 
 
