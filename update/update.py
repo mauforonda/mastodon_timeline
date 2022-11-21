@@ -39,7 +39,7 @@ def filter_instances(dfi):
     """
     
     dfi = dfi[~dfi.name.isin(NONSENSE_INSTANCES)]
-    dfi = dfi[up]
+    dfi = dfi["up"]
     dfi = dfi[(dfi.users > 0) & (dfi.statuses > 0) & (dfi.updated_at.notna())]
     dfi = dfi[(dfi.updated_at > (now - dt.timedelta(hours=3))) & (dfi.updated_at < (now + dt.timedelta(hours=3)))]
 
