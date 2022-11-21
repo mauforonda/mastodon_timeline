@@ -11,7 +11,11 @@ STATE_FILENAME = 'data/timeline.parquet'
 DIRECTORY_FILENAME = 'data/directory.parquet'
 TOKEN = os.environ['INSTANCES_SOCIAL_TOKEN'].strip()
 NONSENSE_INSTANCES = [
-    'you-think-your-fake-numbers-are-impressive.well-this-instance-contains-all-living-humans.lubar.me'
+    'you-think-your-fake-numbers-are-impressive.well-this-instance-contains-all-living-humans.lubar.me',
+    'angelfire-1.glitch.me',
+    'angelfire.glitch.me',
+    'angelfire-2.glitch.me',
+    'angelfire-3.glitch.me'
 ]
 
 def type_instances(dfi):
@@ -28,12 +32,14 @@ def filter_instances(dfi):
     """
     Filter out instances that
     - are manually flagged as returning meaningless numbers, I'm looking at you `you-think-your-fake-numbers-are-impressive.well-this-instance-contains-all-living-humans.lubar.me`
+    - are down
     - return negative `users` or `statuses`
     - return NaN update times
     - are duplicated after normalizing names, selecting the one with more users
     """
     
     dfi = dfi[~dfi.name.isin(NONSENSE_INSTANCES)]
+    dfi = dfi[up]
     dfi = dfi[(dfi.users > 0) & (dfi.statuses > 0) & (dfi.updated_at.notna())]
     dfi = dfi[(dfi.updated_at > (now - dt.timedelta(hours=3))) & (dfi.updated_at < (now + dt.timedelta(hours=3)))]
 
