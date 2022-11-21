@@ -8,7 +8,6 @@ import pyarrow as pa
 import os
 
 STATE_FILENAME = 'data/timeline.parquet'
-DIRECTORY_FILENAME = 'data/directory.parquet'
 TOKEN = os.environ['INSTANCES_SOCIAL_TOKEN'].strip()
 NONSENSE_INSTANCES = [
     'you-think-your-fake-numbers-are-impressive.well-this-instance-contains-all-living-humans.lubar.me',
@@ -31,7 +30,7 @@ def type_instances(dfi):
 def filter_instances(dfi):
     """
     Filter out instances that
-    - are manually flagged as returning meaningless numbers, I'm looking at you `you-think-your-fake-numbers-are-impressive.well-this-instance-contains-all-living-humans.lubar.me`
+    - are manually flagged as returning meaningless numbers
     - are down
     - return negative `users` or `statuses`
     - return NaN update times
