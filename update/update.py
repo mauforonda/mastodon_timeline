@@ -57,7 +57,7 @@ def get_instances():
     
     url = 'https://instances.social/api/1.0/instances/list?count=0'
     headers = {"Authorization": f'Bearer {TOKEN}'}
-    response = requests.get(url, headers=headers, timeout=20)
+    response = requests.get(url, headers=headers, timeout=60)
     response = response.json()
     return pd.DataFrame(response['instances'])    
 
