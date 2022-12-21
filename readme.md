@@ -8,7 +8,8 @@
   - [the latest count for each instance](data/instances.csv)
   - [a timeseries for each instace](data/instance)
   
-## Notes
+## Log of irregularities
 
 - On November 21, 2022, [instances.social](https://github.com/TheKinrar/instances/) [changed](https://mastodon.xyz/@TheKinrar/109381846167480060) how new instances are discovered and indexed. For a few hours the numbers it reported featured instances that deliberately published wrong numbers and many duplicates. After [this commit](https://github.com/mauforonda/mastodon_timeline/commit/1e3a804565f82495c7e3a8ccb3906b780a6f157b) I expect things to go much more smoothly. The number of instances I indexed in this repository grew from 1,904 to 11,115 and the number of users from 4,797,132 to 6,023,097. These new numbers should reflect much better the state of the mastodon ecosystem.
 - On December 19, 2022, [instances.social](https://instances.social/) was down for about 12 hours. Like the last disruption, this one coincides with a major uptake in activity across the fediverse. These disruptions are highly inconvenient but somewhat expected. Donations for [instances.social](https://github.com/TheKinrar/instances/) are open at [patreon](https://www.patreon.com/TheKinrar).
+- On December 21, 2022, after [pushing](https://github.com/TheKinrar/instances/commit/e494fafd59a569af3c70b1ee95321c0d9ffc39a9) a couple of seemingly unrelated changes, [instances.social](https://instances.social) reported a sudden drop in the number of instances it indexed. The results started to make sense again about 12 hours later. There's no public comment from the [maintainer](https://mastodon.xyz/@TheKinrar/).
